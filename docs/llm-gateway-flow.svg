@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+<title id="title">LLM-GATEWAY / HOW A CALL FLOWS</title>
+<desc id="desc">A caller passes through rate limit, budget, PII redaction, injection check, provider call, and cost plus record. Provider call branches to Anthropic, OpenAI, or Google Gemini. GatewayResponse returns to the caller along the bottom.</desc>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10Z" fill="#94a3b8"/></marker>
+<marker id="return" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#2dd4bf"/></marker>
+<style>
+text{font-family:Inter,Segoe UI,Arial,sans-serif;fill:#fff;font-size:14px}
+.heading{font-size:32px;font-weight:750;letter-spacing:1px}
+.label{font-size:14px;font-weight:650;letter-spacing:2px;fill:#cbd5e1}
+.title{font-size:18px;font-weight:700}
+.body{font-size:14px;fill:#fff}
+.error{fill:#f87171;font-size:14px;font-weight:650}
+.mono{font-family:Consolas,monospace;font-size:14px}
+.box{fill:#182438;stroke:#334155;stroke-width:1.2}
+.flow{fill:none;stroke:#94a3b8;stroke-width:2;stroke-linejoin:round;marker-end:url(#arrow)}
+</style>
+</defs>
+<rect width="1600" height="1000" fill="#0f172a"/>
+<rect x="40" y="40" width="5" height="44" rx="2.5" fill="#38bdf8"/>
+<text x="62" y="73" class="heading">LLM-GATEWAY / HOW A CALL FLOWS</text>
+<text x="62" y="106" fill="#cbd5e1">A guarded call, a configured provider, an auditable response.</text>
+<path d="M40 133H1560" stroke="#334155"/>
+
+<text x="980" y="181" class="label">PROVIDER ADAPTERS</text>
+<text x="980" y="212">Optional extras; only the one you install is imported.</text>
+<text x="980" y="247" font-weight="650">Provider protocol:</text>
+<text x="980" y="271" class="mono">complete(system, user, model, max_tokens)</text>
+<path d="M1061 475V312H1350V409" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linejoin="round"/>
+<path d="M1350 249V312" fill="none" stroke="#94a3b8" stroke-width="2"/>
+<path d="M1350 249H1380" class="flow"/>
+<path d="M1350 329H1380" class="flow"/>
+<path d="M1350 409H1380" class="flow"/>
+<circle cx="1350" cy="329" r="3" fill="#94a3b8"/>
+<text x="1075" y="366" fill="#cbd5e1">Configured adapter</text>
+
+<rect x="1380" y="222" width="180" height="54" rx="12" class="box"/>
+<rect x="1380" y="233" width="4" height="32" rx="2" fill="#fb923c"/>
+<text x="1400" y="255" class="title">Anthropic</text>
+<rect x="1380" y="302" width="180" height="54" rx="12" class="box"/>
+<rect x="1380" y="313" width="4" height="32" rx="2" fill="#34d399"/>
+<text x="1400" y="335" class="title">OpenAI</text>
+<rect x="1380" y="382" width="180" height="54" rx="12" class="box"/>
+<rect x="1380" y="393" width="4" height="32" rx="2" fill="#60a5fa"/>
+<text x="1400" y="415" class="title">Google Gemini</text>
+
+<text x="40" y="449" class="label">ENTRY POINT</text>
+<text x="260" y="449" class="label">CALL PIPELINE</text>
+<path d="M240 561H260" class="flow"/>
+<path d="M422 561H440" class="flow"/>
+<path d="M602 561H620" class="flow"/>
+<path d="M782 561H800" class="flow"/>
+<path d="M962 561H980" class="flow"/>
+<path d="M1142 561H1160" class="flow"/>
+
+<rect x="40" y="475" width="200" height="220" rx="14" class="box"/>
+<rect x="40" y="490" width="4" height="190" rx="2" fill="#38bdf8"/>
+<text x="57" y="509" class="title">Caller</text>
+<text x="57" y="536">(e.g. ai-foreman</text>
+<text x="57" y="557">capability)</text>
+<text x="57" y="595" class="mono"><tspan x="57">gw.call(system, user,</tspan><tspan x="57" dy="22">session_id, caller,</tspan><tspan x="57" dy="22">prompt_ref)</tspan></text>
+
+<rect x="260" y="475" width="162" height="220" rx="14" class="box"/>
+<rect x="260" y="490" width="4" height="190" rx="2" fill="#38bdf8"/>
+<text x="276" y="506" class="label">01</text>
+<text x="276" y="539" class="title">Rate limit</text>
+<text x="276" y="575">per session_id,</text>
+<text x="276" y="597">in-memory</text>
+<text x="276" y="671" class="error">RateLimited</text>
+
+<rect x="440" y="475" width="162" height="220" rx="14" class="box"/>
+<rect x="440" y="490" width="4" height="190" rx="2" fill="#fbbf24"/>
+<text x="456" y="506" class="label">02</text>
+<text x="456" y="539" class="title">Budget</text>
+<text x="456" y="575">daily USD cap</text>
+<text x="456" y="671" class="error">BudgetExceeded</text>
+
+<rect x="620" y="475" width="162" height="220" rx="14" class="box"/>
+<rect x="620" y="490" width="4" height="190" rx="2" fill="#a78bfa"/>
+<text x="636" y="506" class="label">03</text>
+<text x="636" y="539" class="title">PII redaction</text>
+<text x="636" y="575">regex: email, phone,</text>
+<text x="636" y="597">SSN, card, API key</text>
+<text x="636" y="637">replaces with [TYPE],</text>
+<text x="636" y="659">counts spans</text>
+
+<rect x="800" y="475" width="162" height="220" rx="14" class="box"/>
+<rect x="800" y="490" width="4" height="190" rx="2" fill="#fb7185"/>
+<text x="816" y="506" class="label">04</text>
+<text x="816" y="539" class="title">Injection check</text>
+<text x="816" y="575">pattern list;</text>
+<text x="816" y="597">flag by default,</text>
+<text x="816" y="619">block if configured</text>
+<text x="816" y="671" class="error">InjectionBlocked</text>
+
+<rect x="980" y="475" width="162" height="220" rx="14" class="box"/>
+<rect x="980" y="490" width="4" height="190" rx="2" fill="#60a5fa"/>
+<text x="996" y="506" class="label">05</text>
+<text x="996" y="539" class="title">Provider call</text>
+<text x="996" y="575">model from config;</text>
+<text x="996" y="597">one retry on</text>
+<text x="996" y="619">fallback_model</text>
+<text x="996" y="671" class="error">ProviderError</text>
+
+<rect x="1160" y="475" width="162" height="220" rx="14" class="box"/>
+<rect x="1160" y="490" width="4" height="190" rx="2" fill="#2dd4bf"/>
+<text x="1176" y="506" class="label">06</text>
+<text x="1176" y="539" class="title">Cost + record</text>
+<text x="1176" y="575">pricing table</text>
+<text x="1176" y="597">estimate; update</text>
+<text x="1176" y="619">session count and</text>
+<text x="1176" y="641">daily spend</text>
+
+<path d="M1241 695V757" fill="none" stroke="#2dd4bf" stroke-width="2" marker-end="url(#return)"/>
+<text x="1260" y="731" fill="#fff">Return + audit</text>
+<rect x="260" y="757" width="1062" height="123" rx="14" class="box"/>
+<rect x="260" y="772" width="4" height="93" rx="2" fill="#2dd4bf"/>
+<text x="280" y="789" class="title">GatewayResponse</text>
+<text x="1300" y="789" text-anchor="end">.audit() = everything except text</text>
+<text x="280" y="824" class="mono">text · request_id · model · input_tokens · output_tokens · cost_usd · latency_ms</text>
+<text x="280" y="852" class="mono">input_hash · redactions · injection_flagged · prompt_ref · caller · session_id</text>
+<path d="M260 817H140V695" fill="none" stroke="#2dd4bf" stroke-width="2" stroke-linejoin="round" marker-end="url(#return)"/>
+<text x="153" y="795">return</text>
+
+<text x="40" y="919" font-style="italic">Redaction and injection check are pattern-based. Passing them does not prove the input is safe. Cost is an estimate from a hand-maintained table.</text>
+<path d="M40 941H1560" stroke="#334155"/>
+<text x="40" y="975" class="label">v0.1 • SEPTEMBER 2026 • github.com/Toyin-Bakare/llm-gateway</text>
+</svg>
