@@ -7,6 +7,14 @@ daily budget, and every field an audit record needs.
 Built as a dependency for [ai-foreman](https://github.com/Toyin-Bakare/ai-foreman).
 Also works on its own.
 
+## How a call flows
+
+![llm-gateway call flow](docs/llm-gateway-flow.svg)
+
+```
+limits → redact → injection check → provider (one fallback) → cost → record → response
+```
+
 ## Install
 
 ```bash
